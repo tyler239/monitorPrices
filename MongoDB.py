@@ -27,6 +27,9 @@ class MongoDB :
     
     def getRecord(self, _token) :
         return self.collection.find_one({'token' : _token})
+    
+    def existsRecord(self, _token) :
+        return self.getRecord(_token) != None
 
     def updateValues(self, _token, _value) :
         self.collection.update_one({'token' : _token}, {'$set' : {'values' : _value}})
