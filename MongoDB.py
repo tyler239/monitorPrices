@@ -18,8 +18,7 @@ class MongoDB :
     def createRecord(self, _token) :
         record = {
             'values' : [0.0] * 200,
-            'max_value' : 0.0, 
-            'min_value' : float('inf'),
+            'trend' : '',
             'token' : _token
         }
         self.collection.insert_one(record)
@@ -35,11 +34,13 @@ class MongoDB :
         self.collection.update_one({'token' : _token}, {'$set' : {'values' : _value}})
         return self
     
-    def updateMaxValue(self, _token, _value) :
-        self.collection.update_one({'token' : _token}, {'$set' : {'max_value' : _value}})
-        return self
-    
-    def updateMinValue(self, _token, _value) :
-        self.collection.update_one({'token' : _token}, {'$set' : {'min_value' : _value}})
-        return self
+    def updateTrend(self, _token, trend) :
+        #Just used when the token is created in the db
+        if(trend) :
+            self.collection.update_one({'token' : _token}, {'$set' : {'trend' : trend}})
+            return
+        if(self.getRecord(_token)['trend'] == 'up') :
+            self.collection.update_one({'token' : _token}, {'$set' : {'trend' : 'down'}})
+        else :
+            self.collection.update_one({'token' : _token}, {'$set' : {'trend' : 'up'}})
     
